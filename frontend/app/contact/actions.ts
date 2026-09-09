@@ -1,9 +1,10 @@
 "use server";
 
 import { sendContactMessage } from "@/lib/api";
+import { site } from "@/lib/site";
 
 export interface ContactFormState {
-  status: "idle" | "success" | "error";
+  status: "idle" | "success" | "error" | "info";
   message?: string;
 }
 
@@ -33,6 +34,12 @@ export async function submitContact(
   }
 
   const result = await sendContactMessage({ name, email, message });
+  if (result.notConnected) {
+    return {
+      status: "info",
+      message: `The form isn't connected to the server yet — your message wasn't sent. Please email me at ${site.email} or reach out on LinkedIn.`,
+    };
+  }
   if (!result.ok) {
     return {
       status: "error",

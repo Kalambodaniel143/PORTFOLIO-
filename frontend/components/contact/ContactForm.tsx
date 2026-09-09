@@ -78,7 +78,9 @@ export function ContactForm() {
             role="status"
             className={cn(
               "text-sm",
-              state.status === "success" ? "text-accent" : "text-red-500",
+              state.status === "success" && "text-accent",
+              state.status === "info" && "text-muted",
+              state.status === "error" && "text-red-500",
             )}
           >
             {state.message}

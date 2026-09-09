@@ -60,11 +60,11 @@ export async function getSkills(): Promise<Skill[]> {
 
 export async function sendContactMessage(
   payload: ContactPayload,
-): Promise<{ ok: boolean; error?: string }> {
+): Promise<{ ok: boolean; error?: string; notConnected?: boolean }> {
   if (!API_URL) {
-    // No backend yet: pretend it worked so the UI flow is testable.
-    console.info("[api] contact form (mock):", payload);
-    return { ok: true };
+    // Backend not wired up yet — do not pretend the message was delivered.
+    console.info("[api] contact form submitted but no backend configured:", payload);
+    return { ok: false, notConnected: true };
   }
   try {
     const res = await fetch(`${API_URL}/api/contact/`, {
