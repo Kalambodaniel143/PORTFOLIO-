@@ -13,7 +13,7 @@ export const site = {
   schoolEmail: "daniel.kalambo@epitech.eu",
   url:
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-    "https://kalambo-daniel.vercel.app",
+    "https://portfolio-qzun.vercel.app",
   cvPath: "/kalambo-daniel-cv.pdf",
   socials: {
     github: "https://github.com/Kalambodaniel143",
