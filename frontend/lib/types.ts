@@ -71,6 +71,7 @@ export interface SchoolProject {
   code: string;
   module: string;
   pitch: string;
+  details: string | null;
   technologies: string[];
   githubUrl: string | null;
 }

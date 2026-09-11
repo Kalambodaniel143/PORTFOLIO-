@@ -140,6 +140,10 @@ class SchoolProject(models.Model):
         help_text="Curriculum module, e.g. Elementary Programming in C.",
     )
     pitch = models.CharField(max_length=280)
+    details = models.TextField(
+        blank=True,
+        help_text="Longer write-up shown when a visitor clicks 'Read more'.",
+    )
     technologies = models.ManyToManyField(
         Technology, blank=True, related_name="school_projects"
     )

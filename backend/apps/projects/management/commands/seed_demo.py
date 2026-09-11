@@ -283,6 +283,7 @@ SCHOOL_PROJECTS = [
         "code": "G-CPE-110",
         "module": "Elementary Programming in C",
         "pitch": "First project of the C curriculum: used dynamic programming to compute the largest square of free space from a room's floor-plan file.",
+        "details": "The program reads a room layout and has to find the largest square area free of obstacles — the classic 'maximal square' dynamic-programming problem. Built in C with a Makefile (re/clean/fclean rules), restricted to open/read/write/close/malloc/free/stat.",
         "order": 1,
         "technologies": ["C"],
     },
@@ -291,6 +292,7 @@ SCHOOL_PROJECTS = [
         "code": "G-CPE-110",
         "module": "Elementary Programming in C",
         "pitch": "A shell-driven lab inventory: hardware is stored in a linked list, with add/delete/display commands and multi-key sorting (by type, name or id).",
+        "details": "A small shell (`Workshop >>`) manages hardware — actuators, devices, processors, sensors, wires — each with a name and an auto-incrementing id, held in a linked list. Sorting supports three keys (type, name, id), each reversible with `-r`, and multiple keys can be chained (e.g. sort by type then name then id).",
         "order": 2,
         "technologies": ["C"],
     },
@@ -299,6 +301,7 @@ SCHOOL_PROJECTS = [
         "code": "G-CPE-110",
         "module": "Elementary Programming in C",
         "pitch": "A hash table library (libhashtable.a) implemented from scratch in C.",
+        "details": "Implements `libhashtable.a`, a generic hash table exposing insert/lookup/remove, built with only write/malloc/free available — no standard hash map to fall back on.",
         "order": 3,
         "technologies": ["C"],
     },
@@ -307,6 +310,7 @@ SCHOOL_PROJECTS = [
         "code": "G-MAT-100",
         "module": "Mathematics",
         "pitch": "Computed a ball's 3D trajectory — velocity vector, future position and paddle-impact angle — for a Pong/Breakout-style game, using pure vector geometry.",
+        "details": "Given the ball's position at two points in time and a time shift, the program derives the velocity vector, the position at t+n, and — if the ball is actually heading toward it — the incidence angle on a paddle lying in the z=0 plane. Any language was allowed; the constraint was the maths, not the tooling.",
         "order": 4,
         "technologies": ["Linear Algebra"],
     },
@@ -315,6 +319,7 @@ SCHOOL_PROJECTS = [
         "code": "G-MAT-100",
         "module": "Mathematics",
         "pitch": "Implemented 2D geometric transformations (translation, scaling, rotation, reflection, and combinations) using homogeneous coordinates and matrix composition, with no matrix library allowed.",
+        "details": "A home-planning tool that computes the coordinates of a point after translation, scaling, rotation and reflection about the origin — and any combination of them — by composing 3×3 matrices in homogeneous coordinates. Using a library such as numpy was explicitly banned.",
         "order": 5,
         "technologies": ["Linear Algebra"],
     },
@@ -323,6 +328,7 @@ SCHOOL_PROJECTS = [
         "code": "G-MUL-100",
         "module": "Multimedia",
         "pitch": "A Duck Hunt–style shooting game built with CSFML: animated sprites, mouse input, and frame-rate-independent movement.",
+        "details": "A small video game where the player shoots ducks crossing the screen: animated sprites from sprite sheets, mouse-click shooting, a window closed through events, and movement timed by sfClock so it holds up regardless of the machine's speed.",
         "order": 6,
         "technologies": ["C", "CSFML"],
     },
@@ -331,6 +337,7 @@ SCHOOL_PROJECTS = [
         "code": "G-MUL-100",
         "module": "Multimedia",
         "pitch": "A 2D air-traffic simulation panel rendered with CSFML: aircraft on straight-line trajectories, collisions, and circular control-tower zones, driven by a custom script format.",
+        "details": "Aircraft take off, fly a straight line at a constant speed and land, read from a custom script file; they're destroyed if they collide outside of a control tower's circular safety zone. Rendered live with CSFML, with togglable hitbox/sprite visibility.",
         "order": 7,
         "technologies": ["C", "CSFML"],
     },
@@ -440,8 +447,10 @@ class Command(BaseCommand):
 
     def _seed_school_projects(self):
         # get_or_create, not update_or_create: an entry already in the
-        # database (possibly hand-edited in the admin) is left untouched;
-        # only genuinely new titles get added.
+        # database is never overwritten wholesale (admin edits survive).
+        # For an existing row, only fields still blank get backfilled —
+        # e.g. adding `details` later fills it in on old rows without
+        # touching a pitch or module someone already hand-edited.
         for data in SCHOOL_PROJECTS:
             data = dict(data)
             techs = data.pop("technologies")
@@ -449,6 +458,21 @@ class Command(BaseCommand):
                 title=data["title"], code=data.get("code", ""), defaults=data
             )
             if created:
+                school_project.technologies.set(
+                    Technology.objects.filter(name__in=techs)
+                )
+                continue
+
+            changed = False
+            for field, value in data.items():
+                if field in ("title", "code"):
+                    continue
+                if not getattr(school_project, field) and value:
+                    setattr(school_project, field, value)
+                    changed = True
+            if changed:
+                school_project.save()
+            if not school_project.technologies.exists() and techs:
                 school_project.technologies.set(
                     Technology.objects.filter(name__in=techs)
                 )

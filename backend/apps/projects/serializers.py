@@ -95,13 +95,25 @@ class ProjectDetailSerializer(ProjectListSerializer):
 class SchoolProjectSerializer(serializers.ModelSerializer):
     technologies = serializers.SerializerMethodField()
     githubUrl = serializers.SerializerMethodField()
+    details = serializers.SerializerMethodField()
 
     class Meta:
         model = SchoolProject
-        fields = ["title", "code", "module", "pitch", "technologies", "githubUrl"]
+        fields = [
+            "title",
+            "code",
+            "module",
+            "pitch",
+            "details",
+            "technologies",
+            "githubUrl",
+        ]
 
     def get_technologies(self, obj: SchoolProject) -> list[str]:
         return list(obj.technologies.values_list("name", flat=True))
 
     def get_githubUrl(self, obj: SchoolProject) -> str | None:
         return obj.github_url or None
+
+    def get_details(self, obj: SchoolProject) -> str | None:
+        return obj.details or None
