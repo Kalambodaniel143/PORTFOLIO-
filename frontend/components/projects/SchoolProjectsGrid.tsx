@@ -31,8 +31,8 @@ export function SchoolProjectsGrid({ projects }: { projects: SchoolProject[] }) 
               className={cn(
                 "rounded-full border px-4 py-1.5 text-sm transition-colors",
                 active === tech
-                  ? "border-accent bg-accent text-accent-fg"
-                  : "border-border text-muted hover:text-foreground",
+                  ? "border-[#818cf8] bg-[#818cf8]/15 text-[#c7d2fe]"
+                  : "border-white/10 text-white/50 hover:border-white/20 hover:text-white/80",
               )}
             >
               {tech}
@@ -48,7 +48,7 @@ export function SchoolProjectsGrid({ projects }: { projects: SchoolProject[] }) 
       </div>
 
       {visible.length === 0 && (
-        <p className="py-16 text-center text-sm text-muted">
+        <p className="py-16 text-center text-sm text-white/50">
           No projects with this technology yet.
         </p>
       )}
