@@ -18,6 +18,7 @@ export default async function ExperiencePage() {
   return (
     <>
       <PageHeader
+        number="03"
         eyebrow="Path"
         title="Experience & Education"
         description="How I got here — school, an internship, a nine-month robotics competition, and a Master's in AI."

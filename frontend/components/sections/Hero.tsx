@@ -2,11 +2,20 @@ import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import {
   ArrowRightIcon,
+  ArrowUpRightIcon,
   DownloadIcon,
   GitHubIcon,
   LinkedInIcon,
 } from "@/components/ui/icons";
 import { site } from "@/lib/site";
+
+const jumpLinks = [
+  { number: "01", label: "About", href: "#about" },
+  { number: "02", label: "Projects", href: "#projects" },
+  { number: "03", label: "Experience", href: "#experience" },
+  { number: "04", label: "Skills", href: "#skills" },
+  { number: "05", label: "Contact", href: "#contact" },
+];
 
 export function Hero() {
   return (
@@ -24,7 +33,7 @@ export function Hero() {
           Open to internships & graduate roles — {site.location}
         </div>
 
-        <h1 className="animate-rise max-w-4xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl">
+        <h1 className="animate-rise max-w-4xl text-4xl font-semibold leading-[1.06] tracking-tight sm:text-6xl lg:text-7xl">
           {site.name.split(" ").slice(0, 2).join(" ")} —{" "}
           <span className="text-muted">
             building reliable, autonomous systems through{" "}
@@ -41,7 +50,7 @@ export function Hero() {
         <div className="animate-rise flex flex-wrap items-center gap-3">
           <ButtonLink href="/projects" size="lg">
             View Projects
-            <ArrowRightIcon className="h-4 w-4" />
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </ButtonLink>
           <ButtonLink
             href={site.cvPath}
@@ -73,6 +82,27 @@ export function Hero() {
             </a>
           </div>
         </div>
+
+        <nav
+          aria-label="Jump to a section"
+          className="animate-rise grid w-full max-w-2xl grid-cols-1 gap-x-10 border-t border-border sm:grid-cols-2"
+        >
+          {jumpLinks.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="group flex items-center justify-between gap-4 border-b border-border py-4 text-sm transition-colors hover:text-accent"
+            >
+              <span className="flex items-center gap-3">
+                <span className="font-mono text-xs text-subtle">
+                  {item.number}
+                </span>
+                <span className="font-medium">{item.label}</span>
+              </span>
+              <ArrowUpRightIcon className="h-4 w-4 text-subtle transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
+            </a>
+          ))}
+        </nav>
       </Container>
     </section>
   );

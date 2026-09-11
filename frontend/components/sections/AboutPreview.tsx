@@ -20,15 +20,16 @@ const focus = [
 
 export function AboutPreview() {
   return (
-    <Section className="border-t border-border">
+    <Section id="about" className="border-t border-border">
       <SectionHeader
+        number="01"
         eyebrow="About"
         title="I like systems that keep working when no one is watching."
         description="Three years of project-based engineering at Epitech taught me to ship under deadline with a team. My focus has settled on the places where software meets the physical world and the infrastructure it runs on."
         action={
           <ButtonLink href="/about" variant="ghost">
             More about me
-            <ArrowRightIcon className="h-4 w-4" />
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </ButtonLink>
         }
       />

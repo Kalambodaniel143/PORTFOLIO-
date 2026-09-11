@@ -19,11 +19,13 @@ export function Section({
 }
 
 export function SectionHeader({
+  number,
   eyebrow,
   title,
   description,
   action,
 }: {
+  number?: string;
   eyebrow?: string;
   title: string;
   description?: string;
@@ -32,10 +34,18 @@ export function SectionHeader({
   return (
     <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
-        {eyebrow && (
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.16em] text-accent">
-            {eyebrow}
-          </p>
+        {(number || eyebrow) && (
+          <div className="mb-3 flex items-center gap-3">
+            {number && (
+              <span className="font-mono text-sm text-accent/70">{number}</span>
+            )}
+            {number && eyebrow && <span className="h-px w-5 bg-border" />}
+            {eyebrow && (
+              <p className="text-sm font-medium uppercase tracking-[0.16em] text-accent">
+                {eyebrow}
+              </p>
+            )}
+          </div>
         )}
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           {title}

@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 
 export function ContactCTA() {
   return (
-    <section className="border-t border-border py-20 sm:py-28">
+    <section id="contact" className="border-t border-border py-20 sm:py-28">
       <Container>
         <div className="relative overflow-hidden rounded-3xl border border-border bg-surface px-6 py-16 text-center sm:px-16">
           <div
@@ -23,7 +23,7 @@ export function ContactCTA() {
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <ButtonLink href="/contact" size="lg">
                 Get in touch
-                <ArrowRightIcon className="h-4 w-4" />
+                <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </ButtonLink>
               <ButtonLink
                 href={`mailto:${site.email}`}

@@ -18,6 +18,7 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
+        number="01"
         eyebrow="Work"
         title="Projects"
         description="Case studies from my time at Epitech and beyond — each one is a real problem I worked through with a team or on my own."

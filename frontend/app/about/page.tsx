@@ -42,6 +42,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
+        number="02"
         eyebrow="About"
         title="Kalambo Daniel Dany"
         description={site.positioning}
@@ -141,7 +142,7 @@ export default function AboutPage() {
           </div>
           <ButtonLink href="/contact" className="w-full">
             Get in touch
-            <ArrowRightIcon className="h-4 w-4" />
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </ButtonLink>
           <ButtonLink
             href={site.cvPath}

@@ -35,6 +35,7 @@ export default function ContactPage() {
   return (
     <>
       <PageHeader
+        number="04"
         eyebrow="Contact"
         title="Let's talk"
         description="Internships, graduate roles, or a project in DevOps, AI or robotics — send a message and I'll reply."
