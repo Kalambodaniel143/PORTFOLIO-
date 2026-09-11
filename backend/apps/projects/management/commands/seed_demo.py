@@ -51,6 +51,7 @@ TECHNOLOGIES = {
     "Backpropagation": "ai",
     "Linear Algebra": "ai",
     "Heuristics": "ai",
+    "CSFML": "tool",
 }
 
 PROJECTS = [
@@ -301,6 +302,38 @@ SCHOOL_PROJECTS = [
         "order": 3,
         "technologies": ["C"],
     },
+    {
+        "title": "101Pong",
+        "code": "G-MAT-100",
+        "module": "Mathematics",
+        "pitch": "Computed a ball's 3D trajectory — velocity vector, future position and paddle-impact angle — for a Pong/Breakout-style game, using pure vector geometry.",
+        "order": 4,
+        "technologies": ["Linear Algebra"],
+    },
+    {
+        "title": "102Architect",
+        "code": "G-MAT-100",
+        "module": "Mathematics",
+        "pitch": "Implemented 2D geometric transformations (translation, scaling, rotation, reflection, and combinations) using homogeneous coordinates and matrix composition, with no matrix library allowed.",
+        "order": 5,
+        "technologies": ["Linear Algebra"],
+    },
+    {
+        "title": "My_Hunter",
+        "code": "G-MUL-100",
+        "module": "Multimedia",
+        "pitch": "A Duck Hunt–style shooting game built with CSFML: animated sprites, mouse input, and frame-rate-independent movement.",
+        "order": 6,
+        "technologies": ["C", "CSFML"],
+    },
+    {
+        "title": "My_Radar",
+        "code": "G-MUL-100",
+        "module": "Multimedia",
+        "pitch": "A 2D air-traffic simulation panel rendered with CSFML: aircraft on straight-line trajectories, collisions, and circular control-tower zones, driven by a custom script format.",
+        "order": 7,
+        "technologies": ["C", "CSFML"],
+    },
 ]
 
 
@@ -340,11 +373,12 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("Flushed portfolio tables."))
 
         self._seed_technologies()
+        # Row-level idempotent (by title + code): safe to run every deploy,
+        # adds newly-documented projects without touching existing rows —
+        # this list keeps growing over time.
+        self._seed_school_projects()
 
         self._seed_if(if_empty, Project, "projects", self._seed_projects)
-        self._seed_if(
-            if_empty, SchoolProject, "school projects", self._seed_school_projects
-        )
         self._seed_if(if_empty, Experience, "experiences", self._seed_experiences)
         self._seed_if(if_empty, Skill, "skills", self._seed_skills)
 
@@ -405,15 +439,19 @@ class Command(BaseCommand):
                 )
 
     def _seed_school_projects(self):
+        # get_or_create, not update_or_create: an entry already in the
+        # database (possibly hand-edited in the admin) is left untouched;
+        # only genuinely new titles get added.
         for data in SCHOOL_PROJECTS:
             data = dict(data)
             techs = data.pop("technologies")
-            school_project, _ = SchoolProject.objects.update_or_create(
+            school_project, created = SchoolProject.objects.get_or_create(
                 title=data["title"], code=data.get("code", ""), defaults=data
             )
-            school_project.technologies.set(
-                Technology.objects.filter(name__in=techs)
-            )
+            if created:
+                school_project.technologies.set(
+                    Technology.objects.filter(name__in=techs)
+                )
 
     def _seed_experiences(self):
         for data in EXPERIENCES:
