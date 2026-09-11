@@ -277,9 +277,18 @@ class Command(BaseCommand):
             action="store_true",
             help="Delete existing portfolio rows before seeding.",
         )
+        parser.add_argument(
+            "--if-empty",
+            action="store_true",
+            help="Do nothing if any Project already exists (safe for deploy hooks).",
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
+        if options["if_empty"] and not options["flush"] and Project.objects.exists():
+            self.stdout.write("Projects already present — skipping seed.")
+            return
+
         if options["flush"]:
             CaseStudyPoint.objects.all().delete()
             ProjectTechnology.objects.all().delete()
