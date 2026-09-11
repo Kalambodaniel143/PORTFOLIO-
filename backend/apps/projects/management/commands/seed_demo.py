@@ -52,6 +52,7 @@ TECHNOLOGIES = {
     "Linear Algebra": "ai",
     "Heuristics": "ai",
     "CSFML": "tool",
+    "ncurses": "tool",
 }
 
 PROJECTS = [
@@ -340,6 +341,33 @@ SCHOOL_PROJECTS = [
         "details": "Aircraft take off, fly a straight line at a constant speed and land, read from a custom script file; they're destroyed if they collide outside of a control tower's circular safety zone. Rendered live with CSFML, with togglable hitbox/sprite visibility.",
         "order": 7,
         "technologies": ["C", "CSFML"],
+    },
+    {
+        "title": "My_LS",
+        "code": "G-PSU-100",
+        "module": "Unix System Programming",
+        "pitch": "Recoded the `ls` command (-a, -l, -R, -d, -t) using only opendir/readdir/stat/lstat — none of the standard library's usual shortcuts.",
+        "details": "Reimplements list, long, recursive, directory-only and time-sort behaviour of `ls`, reading raw directory entries and file metadata by hand and rendering permissions, owners and dates without any formatting helpers. Column alignment, default alphabetical sort and colours were left as bonus.",
+        "order": 8,
+        "technologies": ["C"],
+    },
+    {
+        "title": "My_Navy",
+        "code": "G-PSU-100",
+        "module": "Unix System Programming",
+        "pitch": "A two-player Battleship where the two processes talk exclusively through SIGUSR1/SIGUSR2 signals — no sockets, no pipes.",
+        "details": "Built with a partner: each player runs their own process holding an 8x8 grid and a ships file; turns and attacks are exchanged purely via UNIX signals (signal/sigaction), with the board re-rendered after every turn. Handling signal loss reliably was the core difficulty of the protocol.",
+        "order": 9,
+        "technologies": ["C"],
+    },
+    {
+        "title": "My_Sokoban",
+        "code": "G-PSU-100",
+        "module": "Unix System Programming",
+        "pitch": "A terminal Sokoban (warehouse-keeper puzzle) rendered with ncurses, playable with the arrow keys on any wall-enclosed map shape.",
+        "details": "Reads a map file (walls, boxes, storage spots, player) and renders it live with ncurses; handles terminal resizing with a centered warning, resets on the space bar, and detects both the win condition (all boxes on storage) and the lose condition (no box can move anymore).",
+        "order": 10,
+        "technologies": ["C", "ncurses"],
     },
 ]
 
