@@ -121,3 +121,35 @@ class CaseStudyPoint(models.Model):
 
     def __str__(self) -> str:
         return f"{self.get_kind_display()}: {self.heading}"
+
+
+class SchoolProject(models.Model):
+    """
+    A lightweight entry for coursework completed during a school curriculum
+    (e.g. an Epitech project), as opposed to the flagship `Project` entries
+    which get a full case study. Meant to scale to a large number of rows.
+    """
+
+    title = models.CharField(max_length=120)
+    code = models.CharField(
+        max_length=40, blank=True, help_text="Project code, e.g. G-CPE-110."
+    )
+    module = models.CharField(
+        max_length=160,
+        blank=True,
+        help_text="Curriculum module, e.g. Elementary Programming in C.",
+    )
+    pitch = models.CharField(max_length=280)
+    technologies = models.ManyToManyField(
+        Technology, blank=True, related_name="school_projects"
+    )
+    github_url = models.URLField(blank=True)
+    order = models.PositiveIntegerField(
+        default=0, help_text="Lower numbers appear first."
+    )
+
+    class Meta:
+        ordering = ["order", "code", "title"]
+
+    def __str__(self) -> str:
+        return f"{self.code} — {self.title}" if self.code else self.title

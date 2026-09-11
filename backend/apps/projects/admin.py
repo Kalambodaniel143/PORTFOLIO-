@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import CaseStudyPoint, Project, ProjectTechnology, Technology
+from .models import (
+    CaseStudyPoint,
+    Project,
+    ProjectTechnology,
+    SchoolProject,
+    Technology,
+)
 
 
 class ProjectTechnologyInline(admin.TabularInline):
@@ -63,3 +69,11 @@ class TechnologyAdmin(admin.ModelAdmin):
     list_display = ["name", "category"]
     list_filter = ["category"]
     search_fields = ["name"]
+
+
+@admin.register(SchoolProject)
+class SchoolProjectAdmin(admin.ModelAdmin):
+    list_display = ["title", "code", "module", "order"]
+    list_editable = ["order"]
+    search_fields = ["title", "code", "module"]
+    filter_horizontal = ["technologies"]

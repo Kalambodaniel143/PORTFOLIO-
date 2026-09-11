@@ -66,6 +66,15 @@ export interface Skill {
   level?: "learning" | "comfortable" | "strong";
 }
 
+export interface SchoolProject {
+  title: string;
+  code: string;
+  module: string;
+  pitch: string;
+  technologies: string[];
+  githubUrl: string | null;
+}
+
 export interface ContactPayload {
   name: string;
   email: string;

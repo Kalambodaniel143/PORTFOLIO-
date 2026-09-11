@@ -1,4 +1,4 @@
-import type { Experience, Project, Skill } from "./types";
+import type { Experience, Project, SchoolProject, Skill } from "./types";
 
 /**
  * ---------------------------------------------------------------------------
@@ -343,4 +343,36 @@ export const skills: Skill[] = [
   { name: "Git", category: "Tools", level: "strong" },
   { name: "Linux", category: "Tools", level: "strong" },
   { name: "Bash", category: "Tools", level: "comfortable" },
+];
+
+/**
+ * Coursework completed at Epitech. Each entry is grounded in the project's
+ * official subject sheet. Over 50 projects were completed across the
+ * Bachelor's — this list grows as more subjects are documented.
+ */
+export const schoolProjects: SchoolProject[] = [
+  {
+    title: "Setting Up",
+    code: "G-CPE-110",
+    module: "Elementary Programming in C",
+    pitch: "First project of the C curriculum: used dynamic programming to compute the largest square of free space from a room's floor-plan file.",
+    technologies: ["C"],
+    githubUrl: null,
+  },
+  {
+    title: "Organized",
+    code: "G-CPE-110",
+    module: "Elementary Programming in C",
+    pitch: "A shell-driven lab inventory: hardware is stored in a linked list, with add/delete/display commands and multi-key sorting (by type, name or id).",
+    technologies: ["C"],
+    githubUrl: null,
+  },
+  {
+    title: "Secured",
+    code: "G-CPE-110",
+    module: "Elementary Programming in C",
+    pitch: "A hash table library (libhashtable.a) implemented from scratch in C.",
+    technologies: ["C"],
+    githubUrl: null,
+  },
 ];

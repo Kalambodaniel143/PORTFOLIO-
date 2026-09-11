@@ -1,9 +1,16 @@
 import {
   experiences as mockExperiences,
   projects as mockProjects,
+  schoolProjects as mockSchoolProjects,
   skills as mockSkills,
 } from "./mock-data";
-import type { ContactPayload, Experience, Project, Skill } from "./types";
+import type {
+  ContactPayload,
+  Experience,
+  Project,
+  SchoolProject,
+  Skill,
+} from "./types";
 
 /**
  * Data access layer.
@@ -56,6 +63,10 @@ export async function getExperiences(): Promise<Experience[]> {
 
 export async function getSkills(): Promise<Skill[]> {
   return get<Skill[]>("/api/skills/", mockSkills);
+}
+
+export async function getSchoolProjects(): Promise<SchoolProject[]> {
+  return get<SchoolProject[]>("/api/school-projects/", mockSchoolProjects);
 }
 
 export async function sendContactMessage(

@@ -1,7 +1,11 @@
 from rest_framework import generics
 
-from .models import Project
-from .serializers import ProjectDetailSerializer, ProjectListSerializer
+from .models import Project, SchoolProject
+from .serializers import (
+    ProjectDetailSerializer,
+    ProjectListSerializer,
+    SchoolProjectSerializer,
+)
 
 
 class ProjectListView(generics.ListAPIView):
@@ -22,3 +26,10 @@ class ProjectDetailView(generics.RetrieveAPIView):
         return Project.objects.prefetch_related(
             "projecttechnology_set__technology", "points"
         )
+
+
+class SchoolProjectListView(generics.ListAPIView):
+    serializer_class = SchoolProjectSerializer
+
+    def get_queryset(self):
+        return SchoolProject.objects.prefetch_related("technologies")

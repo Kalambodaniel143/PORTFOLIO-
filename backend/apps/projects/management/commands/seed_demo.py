@@ -14,7 +14,13 @@ from django.db import transaction
 
 from apps.contact.models import ContactMessage
 from apps.experience.models import Experience, ExperienceHighlight
-from apps.projects.models import CaseStudyPoint, Project, ProjectTechnology, Technology
+from apps.projects.models import (
+    CaseStudyPoint,
+    Project,
+    ProjectTechnology,
+    SchoolProject,
+    Technology,
+)
 from apps.skills.models import Skill
 
 TECHNOLOGIES = {
@@ -267,6 +273,36 @@ SKILLS = [
     ("Bash", "Tools", "comfortable"),
 ]
 
+# Coursework completed at Epitech. Each entry is grounded in the project's
+# official subject sheet — add more here as subjects are documented; over
+# 50 were completed across the Bachelor's, this list grows over time.
+SCHOOL_PROJECTS = [
+    {
+        "title": "Setting Up",
+        "code": "G-CPE-110",
+        "module": "Elementary Programming in C",
+        "pitch": "First project of the C curriculum: used dynamic programming to compute the largest square of free space from a room's floor-plan file.",
+        "order": 1,
+        "technologies": ["C"],
+    },
+    {
+        "title": "Organized",
+        "code": "G-CPE-110",
+        "module": "Elementary Programming in C",
+        "pitch": "A shell-driven lab inventory: hardware is stored in a linked list, with add/delete/display commands and multi-key sorting (by type, name or id).",
+        "order": 2,
+        "technologies": ["C"],
+    },
+    {
+        "title": "Secured",
+        "code": "G-CPE-110",
+        "module": "Elementary Programming in C",
+        "pitch": "A hash table library (libhashtable.a) implemented from scratch in C.",
+        "order": 3,
+        "technologies": ["C"],
+    },
+]
+
 
 class Command(BaseCommand):
     help = "Seed the database with placeholder portfolio content."
@@ -280,19 +316,22 @@ class Command(BaseCommand):
         parser.add_argument(
             "--if-empty",
             action="store_true",
-            help="Do nothing if any Project already exists (safe for deploy hooks).",
+            help=(
+                "Only add rows for a category if that category is still empty. "
+                "Never overwrites existing rows — safe to run on every deploy."
+            ),
         )
 
     @transaction.atomic
     def handle(self, *args, **options):
-        if options["if_empty"] and not options["flush"] and Project.objects.exists():
-            self.stdout.write("Projects already present — skipping seed.")
-            return
+        flush = options["flush"]
+        if_empty = options["if_empty"]
 
-        if options["flush"]:
+        if flush:
             CaseStudyPoint.objects.all().delete()
             ProjectTechnology.objects.all().delete()
             Project.objects.all().delete()
+            SchoolProject.objects.all().delete()
             Technology.objects.all().delete()
             ExperienceHighlight.objects.all().delete()
             Experience.objects.all().delete()
@@ -300,12 +339,39 @@ class Command(BaseCommand):
             ContactMessage.objects.all().delete()
             self.stdout.write(self.style.WARNING("Flushed portfolio tables."))
 
+        self._seed_technologies()
+
+        self._seed_if(if_empty, Project, "projects", self._seed_projects)
+        self._seed_if(
+            if_empty, SchoolProject, "school projects", self._seed_school_projects
+        )
+        self._seed_if(if_empty, Experience, "experiences", self._seed_experiences)
+        self._seed_if(if_empty, Skill, "skills", self._seed_skills)
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Done. {Project.objects.count()} projects, "
+                f"{SchoolProject.objects.count()} school projects, "
+                f"{Experience.objects.count()} experiences, "
+                f"{Skill.objects.count()} skills."
+            )
+        )
+
+    def _seed_if(self, if_empty, model, label, seed_fn):
+        if if_empty and model.objects.exists():
+            self.stdout.write(f"{label.capitalize()} already present — skipping.")
+            return
+        seed_fn()
+
+    def _seed_technologies(self):
         for name, category in TECHNOLOGIES.items():
             Technology.objects.update_or_create(
                 name=name, defaults={"category": category}
             )
 
+    def _seed_projects(self):
         for data in PROJECTS:
+            data = dict(data)
             techs = data.pop("technologies")
             decisions = data.pop("decisions", [])
             challenges = data.pop("challenges", [])
@@ -338,7 +404,20 @@ class Command(BaseCommand):
                     order=i,
                 )
 
+    def _seed_school_projects(self):
+        for data in SCHOOL_PROJECTS:
+            data = dict(data)
+            techs = data.pop("technologies")
+            school_project, _ = SchoolProject.objects.update_or_create(
+                title=data["title"], code=data.get("code", ""), defaults=data
+            )
+            school_project.technologies.set(
+                Technology.objects.filter(name__in=techs)
+            )
+
+    def _seed_experiences(self):
         for data in EXPERIENCES:
+            data = dict(data)
             highlights = data.pop("highlights")
             experience, _ = Experience.objects.update_or_create(
                 title=data["title"],
@@ -351,16 +430,9 @@ class Command(BaseCommand):
                     experience=experience, text=text, order=i
                 )
 
+    def _seed_skills(self):
         for i, (name, category, level) in enumerate(SKILLS):
             Skill.objects.update_or_create(
                 name=name,
                 defaults={"category": category, "level": level, "order": i},
             )
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Seeded {Project.objects.count()} projects, "
-                f"{Experience.objects.count()} experiences, "
-                f"{Skill.objects.count()} skills."
-            )
-        )

@@ -23,6 +23,7 @@ export const site = {
 
 export const nav = [
   { href: "/projects", label: "Projects" },
+  { href: "/school-projects", label: "Epitech Projects" },
   { href: "/about", label: "About" },
   { href: "/experience", label: "Experience" },
   { href: "/contact", label: "Contact" },

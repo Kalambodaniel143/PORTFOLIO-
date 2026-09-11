@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import CaseStudyPoint, Project
+from .models import CaseStudyPoint, Project, SchoolProject
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
@@ -90,3 +90,18 @@ class ProjectDetailSerializer(ProjectListSerializer):
         if challenges:
             data["challenges"] = challenges
         return data
+
+
+class SchoolProjectSerializer(serializers.ModelSerializer):
+    technologies = serializers.SerializerMethodField()
+    githubUrl = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SchoolProject
+        fields = ["title", "code", "module", "pitch", "technologies", "githubUrl"]
+
+    def get_technologies(self, obj: SchoolProject) -> list[str]:
+        return list(obj.technologies.values_list("name", flat=True))
+
+    def get_githubUrl(self, obj: SchoolProject) -> str | None:
+        return obj.github_url or None
