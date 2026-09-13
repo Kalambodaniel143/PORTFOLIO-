@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { ArrowUpRightIcon } from "@/components/ui/icons";
+import { coverImageFor } from "@/lib/project-covers";
 import type { Project } from "@/lib/types";
 
 const categoryGradient: Record<Project["category"], string> = {
@@ -11,6 +12,8 @@ const categoryGradient: Record<Project["category"], string> = {
 };
 
 export function ProjectCard({ project }: { project: Project }) {
+  const cover = coverImageFor(project);
+
   return (
     <Link
       href={`/projects/${project.slug}`}
@@ -19,12 +22,12 @@ export function ProjectCard({ project }: { project: Project }) {
       <div
         className={`relative aspect-[16/10] w-full bg-gradient-to-br ${categoryGradient[project.category]}`}
       >
-        {project.coverImage ? (
+        {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={project.coverImage}
+            src={cover}
             alt={project.title}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
