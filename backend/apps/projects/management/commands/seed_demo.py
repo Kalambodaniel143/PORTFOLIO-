@@ -127,7 +127,7 @@ PROJECTS = [
         "contribution": "[TODO: your area — e.g. the vision pipeline, the sorting logic, sensor integration.]",
         "stack": "ROS for the node architecture and messaging, Python/C++ for the nodes, a camera-based perception stack, embedded Linux on the robot's compute board.",
         "architecture": "Sensor nodes publish camera and range data; a perception node classifies items; a decision node selects the target bin; a motion node drives the actuators.",
-        "results": "[TODO: competition result, sorting accuracy, run completion rate.]",
+        "results": "Won the bronze medal at the Tekbot Robotics Challenge 2025. [TODO: sorting accuracy, run completion rate.]",
         "learned": "How the perception -> decision -> action loop behaves under real-world noise, and the discipline required to integrate a multi-person robotics system.",
         "decisions": [("ROS as the backbone", "A publish/subscribe graph let the team develop perception, decision and motion independently and integrate through well-defined message types.")],
         "challenges": [
@@ -220,7 +220,7 @@ EXPERIENCES = [
         "order": 3,
         "highlights": [
             "Perception, navigation and decision-making with ROS",
-            "[Add competition result]",
+            "Won the bronze medal",
         ],
     },
     {
@@ -526,13 +526,15 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("Flushed portfolio tables."))
 
         self._seed_technologies()
-        # Row-level idempotent (by title + code): safe to run every deploy,
-        # adds newly-documented projects without touching existing rows —
-        # this list keeps growing over time.
+        # Row-level idempotent (by title + code, resp. slug, resp.
+        # organization + start_date): safe to run every deploy. New rows
+        # get added and blank/still-placeholder ("[...]") fields on
+        # existing rows get backfilled as real content comes in, without
+        # ever touching a field someone has already hand-edited in Admin.
         self._seed_school_projects()
+        self._seed_projects()
+        self._seed_experiences()
 
-        self._seed_if(if_empty, Project, "projects", self._seed_projects)
-        self._seed_if(if_empty, Experience, "experiences", self._seed_experiences)
         self._seed_if(if_empty, Skill, "skills", self._seed_skills)
 
         self.stdout.write(
@@ -557,39 +559,63 @@ class Command(BaseCommand):
             )
 
     def _seed_projects(self):
+        # get_or_create by slug (stable even if the title's wording changes
+        # later), not update_or_create: an existing row is never overwritten
+        # wholesale. Scalar fields only get backfilled while they're still
+        # blank or visibly a placeholder (wrapped in "[...]", our own
+        # convention for "not confirmed yet") — real content, whether typed
+        # here or hand-edited in Admin, is never touched again.
         for data in PROJECTS:
             data = dict(data)
             techs = data.pop("technologies")
             decisions = data.pop("decisions", [])
             challenges = data.pop("challenges", [])
-            project, _ = Project.objects.update_or_create(
+            project, created = Project.objects.get_or_create(
                 slug=data["slug"], defaults=data
             )
 
-            project.projecttechnology_set.all().delete()
-            for i, tech_name in enumerate(techs):
-                tech = Technology.objects.get(name=tech_name)
-                ProjectTechnology.objects.create(
-                    project=project, technology=tech, order=i
-                )
+            if not created:
+                changed = False
+                for field, value in data.items():
+                    if field == "slug":
+                        continue
+                    current = getattr(project, field)
+                    is_placeholder = not current or (
+                        isinstance(current, str) and "[" in current
+                    )
+                    if is_placeholder and value:
+                        setattr(project, field, value)
+                        changed = True
+                if changed:
+                    project.save()
 
-            project.points.all().delete()
-            for i, (heading, body) in enumerate(decisions):
-                CaseStudyPoint.objects.create(
-                    project=project,
-                    kind=CaseStudyPoint.Kind.DECISION,
-                    heading=heading,
-                    body=body,
-                    order=i,
-                )
-            for i, (heading, body) in enumerate(challenges):
-                CaseStudyPoint.objects.create(
-                    project=project,
-                    kind=CaseStudyPoint.Kind.CHALLENGE,
-                    heading=heading,
-                    body=body,
-                    order=i,
-                )
+            if created or not project.projecttechnology_set.exists():
+                project.projecttechnology_set.all().delete()
+                for i, tech_name in enumerate(techs):
+                    tech = Technology.objects.get(name=tech_name)
+                    ProjectTechnology.objects.create(
+                        project=project, technology=tech, order=i
+                    )
+
+            existing_points = list(project.points.all())
+            if not existing_points or any("[" in p.body for p in existing_points):
+                project.points.all().delete()
+                for i, (heading, body) in enumerate(decisions):
+                    CaseStudyPoint.objects.create(
+                        project=project,
+                        kind=CaseStudyPoint.Kind.DECISION,
+                        heading=heading,
+                        body=body,
+                        order=i,
+                    )
+                for i, (heading, body) in enumerate(challenges):
+                    CaseStudyPoint.objects.create(
+                        project=project,
+                        kind=CaseStudyPoint.Kind.CHALLENGE,
+                        heading=heading,
+                        body=body,
+                        order=i,
+                    )
 
     def _seed_school_projects(self):
         # get_or_create, not update_or_create: an entry already in the
@@ -624,19 +650,44 @@ class Command(BaseCommand):
                 )
 
     def _seed_experiences(self):
+        # get_or_create by organization + start_date — deliberately not
+        # title, since a title can gain an honest result ("— Participant"
+        # becoming "— Bronze Medal") without that being a different entry.
+        # Same blank/placeholder-only backfill rule as school projects and
+        # projects above.
         for data in EXPERIENCES:
             data = dict(data)
             highlights = data.pop("highlights")
-            experience, _ = Experience.objects.update_or_create(
-                title=data["title"],
+            experience, created = Experience.objects.get_or_create(
                 organization=data["organization"],
+                start_date=data["start_date"],
                 defaults=data,
             )
-            experience.highlights.all().delete()
-            for i, text in enumerate(highlights):
-                ExperienceHighlight.objects.create(
-                    experience=experience, text=text, order=i
-                )
+
+            if not created:
+                changed = False
+                for field, value in data.items():
+                    if field in ("organization", "start_date"):
+                        continue
+                    current = getattr(experience, field)
+                    is_placeholder = not current or (
+                        isinstance(current, str) and "[" in current
+                    )
+                    if is_placeholder and value:
+                        setattr(experience, field, value)
+                        changed = True
+                if changed:
+                    experience.save()
+
+            existing_highlights = list(experience.highlights.all())
+            if not existing_highlights or any(
+                "[" in h.text for h in existing_highlights
+            ):
+                experience.highlights.all().delete()
+                for i, text in enumerate(highlights):
+                    ExperienceHighlight.objects.create(
+                        experience=experience, text=text, order=i
+                    )
 
     def _seed_skills(self):
         for i, (name, category, level) in enumerate(SKILLS):

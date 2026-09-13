@@ -152,7 +152,7 @@ export const projects: Project[] = [
         },
       ],
       results:
-        "[TODO: competition result, sorting accuracy, run completion rate.]",
+        "Won the bronze medal at the Tekbot Robotics Challenge 2025. [TODO: sorting accuracy, run completion rate.]",
       learned:
         "How the perception → decision → action loop behaves under real-world noise, and the discipline required to integrate a multi-person robotics system.",
     },
@@ -284,7 +284,7 @@ export const experiences: Experience[] = [
       "Nine months designing and building an autonomous robot able to detect and sort waste.",
     highlights: [
       "Perception, navigation and decision-making with ROS",
-      "[Add competition result]",
+      "Won the bronze medal",
     ],
   },
   {
