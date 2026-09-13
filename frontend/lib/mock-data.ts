@@ -165,7 +165,7 @@ export const projects: Project[] = [
     title: "My_Torch",
     tagline: "A neural network built from scratch — no ML libraries.",
     shortDescription:
-      "Feed-forward neural network implemented from first principles, trained with supervised learning to classify chess board states (check, checkmate, stalemate…).",
+      "Feed-forward neural network implemented from first principles, trained with supervised learning to classify chess board states.",
     category: "AI",
     featured: false,
     status: "completed",
@@ -179,13 +179,14 @@ export const projects: Project[] = [
     },
     caseStudy: {
       overview:
-        "My_Torch is a small neural-network engine written without any specialised ML framework: the layers, forward pass, loss and backpropagation are all hand-implemented.",
+        "My_Torch is a small neural-network engine built without any ML framework — PyTorch, TensorFlow and similar libraries are explicitly forbidden by the subject — split into a reusable NN module (create, save/load, train a network) and a my_torch_analyzer executable that classifies a chessboard given in FEN notation as Checkmate, Check or Nothing.",
       problem:
-        "Understand neural networks by building one — then use it to classify the state of a chess game from a board description.",
-      contribution: "Entire project: engine, training loop, dataset handling, CLI.",
-      stack: "[Confirm language] C++, custom matrix operations, gradient descent.",
+        "Detect the state of a chess game — Checkmate, Check or Nothing, and optionally which side has the advantage — from a chessboard given in Forsyth-Edwards Notation, using a model trained purely with supervised learning.",
+      contribution:
+        "Entire project: the neural-network module (layer creation, forward pass, save/load, training) and the my_torch_analyzer CLI (train and predict modes).",
+      stack: "C++, custom matrix operations, hand-implemented gradient descent.",
       architecture:
-        "A configurable stack of dense layers with activation functions; a training mode that learns from a labelled dataset and a prediction mode that loads a saved network.",
+        "A configurable neural-network module exposing creation, save/load and training; and a my_torch_analyzer executable with two modes — --train (learns from a labelled FEN dataset, optionally saved with --save) and --predict (loads a saved network and classifies every board in an input file, in the same order).",
       decisions: [
         {
           heading: "Implement backprop by hand",
@@ -194,12 +195,16 @@ export const projects: Project[] = [
       ],
       challenges: [
         {
+          heading: "Avoiding overfitting",
+          body: "The subject makes this a hard requirement. [Describe the validation/regularisation strategy you used to keep the network from memorising the training set.]",
+        },
+        {
           heading: "Numerical stability",
-          body: "[Describe issues with exploding/vanishing values and how you handled them — normalisation, learning-rate tuning.]",
+          body: "[Describe issues with exploding/vanishing values and how you handled them.]",
         },
       ],
       results:
-        "[TODO: classification accuracy on the evaluation set.]",
+        "[TODO: classification accuracy reached on Checkmate / Check / Nothing, and on the White/Black-advantage bonus if you implemented it.]",
       learned:
         "The mechanics of gradient descent and backpropagation, and why framework abstractions exist.",
     },
@@ -223,9 +228,9 @@ export const projects: Project[] = [
     },
     caseStudy: {
       overview:
-        "A Gomoku engine that communicates over the standard protocol and must return a strong move within a fixed time budget.",
+        "A Gomoku (five-in-a-row) bot — binary name pbrain-gomoku-ai — playing on a 20x20 board under the freestyle ruleset, driven by the liskvork game manager and speaking the Epitech Mirror communication protocol.",
       problem:
-        "The search space is large; the AI needs a good position-evaluation heuristic and an efficient, time-bounded search.",
+        "The search space on a 20x20 board is huge, and only standard libraries are allowed — no TensorFlow, no scikit-learn. Each move must come back within 5 seconds and 70MB of memory, so the AI needs both a strong position-evaluation heuristic and a search that respects that budget.",
       contribution: "Entire project.",
       stack: "C++, minimax with alpha-beta pruning, a pattern-based board evaluation.",
       architecture:
@@ -238,11 +243,12 @@ export const projects: Project[] = [
       ],
       challenges: [
         {
-          heading: "Staying within the time limit",
-          body: "[Describe iterative deepening / early cutoff strategy.]",
+          heading: "Staying within the 5-second, 70MB-per-move budget",
+          body: "[Describe the iterative-deepening / early-cutoff strategy that kept the search inside this limit.]",
         },
       ],
-      results: "[TODO: win rate against reference opponents.]",
+      results:
+        "Evaluated by Epitech's two-step process: solving pre-filled 'winning move' boards, then playing matches against local bots of low/medium level. [TODO: win rate reached against those reference bots.]",
       learned:
         "Adversarial search, heuristic design, and the trade-off between search depth and evaluation quality.",
     },
