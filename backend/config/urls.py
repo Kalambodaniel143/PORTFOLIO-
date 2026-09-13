@@ -29,6 +29,5 @@ if settings.DEBUG or not settings.SUPABASE_URL:
     # route is simply unused.
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-admin.site.site_header = "Portfolio administration"
-admin.site.site_title = "Portfolio admin"
-admin.site.index_title = "Content"
+# Site branding now lives in the UNFOLD setting (config/settings/base.py),
+# which the django-unfold theme reads instead of these.

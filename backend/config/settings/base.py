@@ -5,6 +5,7 @@ Environment-specific overrides live in dev.py / prod.py.
 from pathlib import Path
 
 import dj_database_url
+from django.urls import reverse_lazy
 from dotenv import load_dotenv
 import os
 
@@ -32,6 +33,8 @@ DEBUG = env_bool("DEBUG", False)
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1")
 
 INSTALLED_APPS = [
+    # Unfold must come before django.contrib.admin to replace its templates.
+    "unfold",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -143,6 +146,78 @@ if SUPABASE_URL:
     AWS_S3_CUSTOM_DOMAIN = f"{_supabase_host}/storage/v1/object/public/{_supabase_bucket}"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# The only login flow this project has is the Admin dashboard.
+LOGIN_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = "/admin/"
+
+# --- Admin dashboard theme (django-unfold) ---------------------------------
+# Purely visual: a themed skin over the same Django Admin views, colored to
+# match the portfolio's own indigo accent, with a shortcut sidebar to every
+# content type. No new auth system, no new API surface.
+UNFOLD = {
+    "SITE_TITLE": "Portfolio dashboard",
+    "SITE_HEADER": "Daniel Kalambo",
+    "SITE_SUBHEADER": "Portfolio dashboard",
+    "SITE_URL": "/",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": False,
+    "COLORS": {
+        "primary": {
+            "50": "#eef2ff",
+            "100": "#e0e7ff",
+            "200": "#c7d2fe",
+            "300": "#a5b4fc",
+            "400": "#818cf8",
+            "500": "#6366f1",
+            "600": "#4f46e5",
+            "700": "#4338ca",
+            "800": "#3730a3",
+            "900": "#312e81",
+            "950": "#1e1b4b",
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "navigation": [
+            {
+                "title": "Portfolio",
+                "items": [
+                    {
+                        "title": "Projects",
+                        "icon": "rocket_launch",
+                        "link": reverse_lazy("admin:projects_project_changelist"),
+                    },
+                    {
+                        "title": "Epitech projects",
+                        "icon": "school",
+                        "link": reverse_lazy("admin:projects_schoolproject_changelist"),
+                    },
+                    {
+                        "title": "Technologies",
+                        "icon": "code",
+                        "link": reverse_lazy("admin:projects_technology_changelist"),
+                    },
+                    {
+                        "title": "Experience",
+                        "icon": "work_history",
+                        "link": reverse_lazy("admin:experience_experience_changelist"),
+                    },
+                    {
+                        "title": "Skills",
+                        "icon": "psychology",
+                        "link": reverse_lazy("admin:skills_skill_changelist"),
+                    },
+                    {
+                        "title": "Contact messages",
+                        "icon": "mail",
+                        "link": reverse_lazy("admin:contact_contactmessage_changelist"),
+                    },
+                ],
+            },
+        ],
+    },
+}
 
 # --- DRF ------------------------------------------------------------------
 REST_FRAMEWORK = {

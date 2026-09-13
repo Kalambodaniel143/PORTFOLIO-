@@ -1,4 +1,5 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin, StackedInline, TabularInline
 
 from .models import (
     CaseStudyPoint,
@@ -9,20 +10,20 @@ from .models import (
 )
 
 
-class ProjectTechnologyInline(admin.TabularInline):
+class ProjectTechnologyInline(TabularInline):
     model = ProjectTechnology
     extra = 3
     autocomplete_fields = ["technology"]
 
 
-class CaseStudyPointInline(admin.StackedInline):
+class CaseStudyPointInline(StackedInline):
     model = CaseStudyPoint
     extra = 0
     fields = ["kind", "heading", "body", "order"]
 
 
 @admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(ModelAdmin):
     list_display = ["title", "category", "featured", "status", "year", "order"]
     list_editable = ["featured", "order"]
     list_filter = ["category", "featured", "status"]
@@ -66,14 +67,14 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 @admin.register(Technology)
-class TechnologyAdmin(admin.ModelAdmin):
+class TechnologyAdmin(ModelAdmin):
     list_display = ["name", "category"]
     list_filter = ["category"]
     search_fields = ["name"]
 
 
 @admin.register(SchoolProject)
-class SchoolProjectAdmin(admin.ModelAdmin):
+class SchoolProjectAdmin(ModelAdmin):
     list_display = ["title", "code", "module", "order"]
     list_editable = ["order"]
     search_fields = ["title", "code", "module"]
