@@ -7,8 +7,10 @@ pip install -r requirements.txt
 python manage.py collectstatic --no-input
 python manage.py migrate --no-input
 
-# Seed placeholder content on the very first deploy only (no-op afterwards,
-# so it never overwrites content edited in the admin).
+# Seeds/backfills project, experience and school-project content on every
+# deploy (blank or still-"[placeholder]" fields only — never touches
+# anything already confirmed or hand-edited in Admin); skills are only
+# seeded once, on the very first deploy.
 python manage.py seed_demo --if-empty
 
 # Create the admin user once, from env vars, if it doesn't exist yet.

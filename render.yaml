@@ -8,6 +8,17 @@
 #   CORS_ALLOWED_ORIGINS     -> https://<your-frontend>.vercel.app
 #   CSRF_TRUSTED_ORIGINS     -> https://<your-frontend>.vercel.app
 #   DJANGO_SUPERUSER_PASSWORD -> a password for the admin account
+#
+# Optional — only needed for Admin-uploaded images/PDFs to persist and be
+# servable in production (Render's own disk is wiped on every deploy).
+# Create a Supabase project + a *public* Storage bucket, then fill in:
+#   SUPABASE_URL             -> https://<project-ref>.supabase.co
+#   SUPABASE_BUCKET_NAME     -> the bucket name (e.g. "media")
+#   SUPABASE_S3_REGION       -> region shown in Storage > S3 Connection
+#   AWS_ACCESS_KEY_ID        -> S3 access key from Storage > S3 Connection
+#   AWS_SECRET_ACCESS_KEY    -> S3 secret key from the same panel
+# Leave all of these unset and Admin uploads just won't persist — everything
+# else on the site keeps working.
 services:
   - type: web
     name: portfolio-api
@@ -45,4 +56,15 @@ services:
       - key: DJANGO_SUPERUSER_EMAIL
         value: kalambodaniel143@gmail.com
       - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+      # Optional Supabase Storage config — see the comment block above.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_BUCKET_NAME
+        sync: false
+      - key: SUPABASE_S3_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
         sync: false

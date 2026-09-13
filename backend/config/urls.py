@@ -22,7 +22,11 @@ urlpatterns = [
     path("api/", include(api_patterns)),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG or not settings.SUPABASE_URL:
+    # Fallback so uploaded files are at least reachable within the lifetime
+    # of the current deploy when Supabase Storage isn't configured. Once
+    # SUPABASE_URL is set, file URLs point straight at Supabase and this
+    # route is simply unused.
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = "Portfolio administration"

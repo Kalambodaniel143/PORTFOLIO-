@@ -116,6 +116,32 @@ STORAGES = {
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Admin-uploaded files (cover images, project PDFs) go to Supabase Storage
+# when configured, so they survive Render's ephemeral filesystem and are
+# actually reachable over HTTP in production (nothing serves /media/ there
+# otherwise). Unset SUPABASE_URL locally and everything falls back to plain
+# local disk storage under MEDIA_ROOT above — zero config for a fresh clone.
+SUPABASE_URL = env("SUPABASE_URL")
+if SUPABASE_URL:
+    _supabase_host = SUPABASE_URL.removeprefix("https://").removeprefix("http://").rstrip("/")
+    _supabase_bucket = env("SUPABASE_BUCKET_NAME", "media")
+
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3.S3Storage"}
+    AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = _supabase_bucket
+    # Supabase's S3-compatible gateway accepts uploads here...
+    AWS_S3_ENDPOINT_URL = f"https://{_supabase_host}/storage/v1/s3"
+    AWS_S3_REGION_NAME = env("SUPABASE_S3_REGION", "us-east-1")
+    AWS_S3_ADDRESSING_STYLE = "path"
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+    # ...but public reads go through Supabase's own REST path instead of the
+    # S3 endpoint, since that's the URL format a public bucket actually
+    # serves objects from.
+    AWS_S3_CUSTOM_DOMAIN = f"{_supabase_host}/storage/v1/object/public/{_supabase_bucket}"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- DRF ------------------------------------------------------------------
