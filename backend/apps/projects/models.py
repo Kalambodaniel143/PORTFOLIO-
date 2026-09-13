@@ -59,6 +59,12 @@ class Project(TimeStampedModel):
     cover_image = models.ImageField(
         upload_to="projects/", blank=True, null=True
     )
+    pdf = models.FileField(
+        upload_to="projects/pdfs/",
+        blank=True,
+        null=True,
+        help_text="Optional — a report, slide deck or write-up to attach.",
+    )
     github_url = models.URLField(blank=True)
     live_url = models.URLField(blank=True)
     docs_url = models.URLField(blank=True)

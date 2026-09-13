@@ -8,6 +8,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
     shortDescription = serializers.CharField(source="short_description")
     coverImage = serializers.SerializerMethodField()
+    pdfUrl = serializers.SerializerMethodField()
     technologies = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
 
@@ -25,14 +26,21 @@ class ProjectListSerializer(serializers.ModelSerializer):
             "role",
             "technologies",
             "coverImage",
+            "pdfUrl",
             "links",
         ]
 
     def get_coverImage(self, obj: Project) -> str | None:
-        if not obj.cover_image:
+        return self._file_url(obj.cover_image)
+
+    def get_pdfUrl(self, obj: Project) -> str | None:
+        return self._file_url(obj.pdf)
+
+    def _file_url(self, file_field) -> str | None:
+        if not file_field:
             return None
         request = self.context.get("request")
-        url = obj.cover_image.url
+        url = file_field.url
         return request.build_absolute_uri(url) if request else url
 
     def get_technologies(self, obj: Project) -> list[str]:

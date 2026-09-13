@@ -29,6 +29,7 @@ export interface Project {
   role: string;
   technologies: string[];
   coverImage: string | null;
+  pdfUrl: string | null;
   links: {
     github?: string;
     live?: string;

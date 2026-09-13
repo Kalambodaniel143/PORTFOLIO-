@@ -42,6 +42,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     ("featured", "order"),
                     ("year", "role"),
                     "cover_image",
+                    "pdf",
                 ]
             },
         ),

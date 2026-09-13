@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import {
   ArrowRightIcon,
+  DownloadIcon,
   ExternalLinkIcon,
   GitHubIcon,
 } from "@/components/ui/icons";
@@ -85,6 +86,12 @@ export default async function ProjectPage({
               <ButtonLink href={project.links.docs} variant="secondary" external>
                 <ExternalLinkIcon className="h-4 w-4" />
                 Documentation
+              </ButtonLink>
+            )}
+            {project.pdfUrl && (
+              <ButtonLink href={project.pdfUrl} variant="secondary" external>
+                <DownloadIcon className="h-4 w-4" />
+                Download PDF
               </ButtonLink>
             )}
           </div>

@@ -22,6 +22,7 @@ export const projects: Project[] = [
     role: "DevOps Engineer",
     technologies: ["Docker", "Kubernetes", "Jenkins", "Helm", "Ansible", "Groovy"],
     coverImage: null,
+    pdfUrl: null,
     links: {
       github: "https://github.com/Kalambodaniel143",
       // live: "",
@@ -77,6 +78,7 @@ export const projects: Project[] = [
     role: "Full-Stack Developer",
     technologies: ["TypeScript", "React", "Node.js", "PostgreSQL", "REST API"],
     coverImage: null,
+    pdfUrl: null,
     links: {
       github: "https://github.com/Kalambodaniel143",
     },
@@ -121,6 +123,7 @@ export const projects: Project[] = [
     role: "Robotics Engineer — perception & autonomy",
     technologies: ["ROS", "Python", "C++", "Computer Vision", "Embedded Linux"],
     coverImage: null,
+    pdfUrl: null,
     links: {
       github: "https://github.com/Kalambodaniel143",
     },
@@ -170,6 +173,7 @@ export const projects: Project[] = [
     role: "Solo project",
     technologies: ["C++", "Linear Algebra", "Backpropagation"],
     coverImage: null,
+    pdfUrl: null,
     links: {
       github: "https://github.com/Kalambodaniel143",
     },
@@ -213,6 +217,7 @@ export const projects: Project[] = [
     role: "Solo project",
     technologies: ["C++", "Minimax", "Alpha-Beta Pruning", "Heuristics"],
     coverImage: null,
+    pdfUrl: null,
     links: {
       github: "https://github.com/Kalambodaniel143",
     },
