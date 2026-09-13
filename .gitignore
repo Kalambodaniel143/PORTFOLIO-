@@ -24,3 +24,7 @@ next-env.d.ts
 .idea/
 .vscode/
 *.log
+
+# Scratch folder for source photos/assets before they're copied into
+# frontend/public/ — not meant to be deployed as-is.
+/Images/
